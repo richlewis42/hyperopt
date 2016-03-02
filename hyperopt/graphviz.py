@@ -4,8 +4,8 @@ in a search space.
 
 """
 
-import StringIO
-from pyll_utils import expr_to_config
+import io
+from .pyll_utils import expr_to_config
 
 
 def dot_hyperparameters(expr):
@@ -31,23 +31,23 @@ def dot_hyperparameters(expr):
     conditions = ()
     hps = {}
     expr_to_config(expr, conditions, hps)
-    rval = StringIO.StringIO()
-    print >> rval, "digraph {"
+    rval = io.StringIO()
+    print("digraph {", file=rval)
     edges = set()
 
     def var_node(a):
-        print >> rval, '"%s" [ shape=box];' % a
+        print('"%s" [ shape=box];' % a, file=rval)
 
     def cond_node(a):
-        print >> rval, '"%s" [ shape=ellipse];' % a
+        print('"%s" [ shape=ellipse];' % a, file=rval)
 
     def edge(a, b):
         text = '"%s" -> "%s";' % (a, b)
         if text not in edges:
-            print >> rval, text
+            print(text, file=rval)
             edges.add(text)
 
-    for hp, dct in hps.items():
+    for hp, dct in list(hps.items()):
         # create the node
         var_node(hp)
 
@@ -71,6 +71,6 @@ def dot_hyperparameters(expr):
                 edge(and_conds[0].name, parent_label)
                 cond_node(parent_label)
                 edge(parent_label, hp)
-    print >> rval, "}"
+    print("}", file=rval)
     return rval.getvalue()
 

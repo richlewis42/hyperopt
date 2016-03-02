@@ -53,7 +53,7 @@ class Suggest_API(object):
     def make_tst_class(cls, suggest, domain, name):
         class Tester(unittest.TestCase, cls):
             def suggest(self, *args, **kwargs):
-                print(args, kwargs)
+                print args, kwargs
                 return suggest(*args, **kwargs)
 
             def setUp(self):
@@ -79,10 +79,10 @@ class Suggest_API(object):
         idxs_1, vals_1 = self.idxs_vals_from_ids(ids=ids_1, seed=45)
         idxs_2, vals_2 = self.idxs_vals_from_ids(ids=ids_2, seed=45)
         all_ids_1 = set()
-        for var, ids in list(idxs_1.items()):
+        for var, ids in idxs_1.items():
             all_ids_1.update(ids)
         all_ids_2 = set()
-        for var, ids in list(idxs_2.items()):
+        for var, ids in idxs_2.items():
             all_ids_2.update(ids)
         self.assertEqual(all_ids_1, set(ids_1))
         self.assertEqual(all_ids_2, set(ids_2))
@@ -100,8 +100,8 @@ class Suggest_API(object):
 
         # -- sample 20 points to make sure we get some differences even
         #    for small search spaces (chance of false failure is 1/million).
-        idxs_1, vals_1 = self.idxs_vals_from_ids(ids=list(range(20)), seed=45)
-        idxs_2, vals_2 = self.idxs_vals_from_ids(ids=list(range(20)), seed=46)
+        idxs_1, vals_1 = self.idxs_vals_from_ids(ids=range(20), seed=45)
+        idxs_2, vals_2 = self.idxs_vals_from_ids(ids=range(20), seed=46)
         self.assertNotEqual((idxs_1, vals_1), (idxs_2, vals_2))
 
 
@@ -210,7 +210,7 @@ class TestSONify(unittest.TestCase):
                 == [[1, 2], [3, 4.5]])
 
     def test_nested_w_bool(self):
-        thing = dict(a=1, b='2', c=True, d=False, e=np.int(3), f=[1])
+        thing = dict(a=1, b='2', c=True, d=False, e=np.int(3), f=[1l])
         assert thing == SONify(thing)
 
 

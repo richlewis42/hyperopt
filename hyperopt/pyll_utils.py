@@ -1,16 +1,16 @@
 from functools import partial, wraps
-from base import DuplicateLabel
-from pyll.base import Apply, Literal
-from pyll import scope
-from pyll import as_apply
+from .base import DuplicateLabel
+from .pyll.base import Apply, Literal
+from .pyll import scope
+from .pyll import as_apply
 
 
 def validate_label(f):
     @wraps(f)
     def wrapper(label, *args, **kwargs):
-        is_real_string = isinstance(label, basestring)
+        is_real_string = isinstance(label, str)
         is_literal_string = (isinstance(label, Literal) and
-                             isinstance(label.obj, basestring))
+                             isinstance(label.obj, str))
         if not is_real_string and not is_literal_string:
             raise TypeError('require string label')
         return f(label, *args, **kwargs)
@@ -38,7 +38,7 @@ def hp_pchoice(label, p_options):
     label: string
     p_options: list of (probability, option) pairs
     """
-    p, options = zip(*p_options)
+    p, options = list(zip(*p_options))
     n_options = len(options)
     ch = scope.hyperopt_param(label,
                               scope.categorical(
@@ -200,12 +200,12 @@ def _remove_allpaths(hps, conditions):
     Better would be logic programming.
     """
     potential_conds = {}
-    for k, v in hps.items():
+    for k, v in list(hps.items()):
         if v['node'].name in ('randint', 'categorical'):
             upper = v['node'].arg['upper'].obj
             potential_conds[k] = frozenset([EQ(k, ii) for ii in range(upper)])
 
-    for k, v in hps.items():
+    for k, v in list(hps.items()):
         if len(v['conditions']) > 1:
             all_conds = [[c for c in cond if c is not True]
                          for cond in v['conditions']]

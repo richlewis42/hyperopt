@@ -132,7 +132,7 @@ class quniform_gen(object):
 
     """
     def __init__(self, low, high, q):
-        low, high, q = map(float, (low, high, q))
+        low, high, q = list(map(float, (low, high, q)))
         qlow = np.round(low / q) * q
         qhigh = np.round(high / q) * q
         if qlow == qhigh:
@@ -178,7 +178,7 @@ class qloguniform_gen(quniform_gen):
     #    because I don't understand the design of those rv classes
 
     def __init__(self, low, high, q):
-        low, high, q = map(float, (low, high, q))
+        low, high, q = list(map(float, (low, high, q)))
         elow = np.exp(low)
         ehigh = np.exp(high)
         qlow = np.round(elow / q) * q
@@ -229,7 +229,7 @@ class qnormal_gen(object):
     """Stats for Y = q * round(X / q) where X ~ N(mu, sigma)
     """
     def __init__(self, mu, sigma, q):
-        self.mu, self.sigma, self.q = map(float, (mu, sigma, q))
+        self.mu, self.sigma, self.q = list(map(float, (mu, sigma, q)))
         # -- distfn for using the CDF
         self._norm_logcdf = scipy.stats.norm(loc=mu, scale=sigma).logcdf
 
@@ -276,7 +276,7 @@ class qlognormal_gen(object):
     """Stats for Y = q * round(exp(X) / q) where X ~ N(mu, sigma)
     """
     def __init__(self, mu, sigma, q):
-        self.mu, self.sigma, self.q = map(float, (mu, sigma, q))
+        self.mu, self.sigma, self.q = list(map(float, (mu, sigma, q)))
         # -- distfn for using the CDF
         self._norm_cdf = scipy.stats.norm(loc=mu, scale=sigma).cdf
 

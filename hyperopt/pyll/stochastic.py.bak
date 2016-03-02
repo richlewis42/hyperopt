@@ -9,7 +9,7 @@ from .base import scope, as_apply, dfs, Apply, rec_eval, clone
 ################################################################################
 ################################################################################
 def ERR(msg):
-    print(msg, file=sys.stderr)
+    print >> sys.stderr, msg
 
 
 implicit_stochastic_symbols = set()
@@ -134,7 +134,7 @@ def categorical(p, upper=None, rng=None, size=()):
         n_draws, = size
         assert n_draws == n_draws_
         rval = [np.where(rng.multinomial(pvals=p[ii], n=1))[0][0]
-                                for ii in range(n_draws)]
+                                for ii in xrange(n_draws)]
         rval = np.asarray(rval)
         rval.shape = size
         return rval

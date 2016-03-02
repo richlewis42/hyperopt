@@ -199,7 +199,7 @@ class ExprEvaluator(object):
         if self.memo_gc:
             # -- Ensure no computed argument has been (accidentally) freed for
             #    garbage-collection.
-            for aa in args + kwargs.values():
+            for aa in args + list(kwargs.values()):
                 assert aa is not pyll.base.GarbageCollected
 
         if self.deepcopy_inputs:
@@ -229,7 +229,7 @@ class SuggestAlgo(ExprEvaluator):
         self.domain = domain
         self.trials = trials
         self.label_by_node = dict([
-            (n, l) for l, n in self.domain.vh.vals_by_label().items()])
+            (n, l) for l, n in list(self.domain.vh.vals_by_label().items())])
         self._seed = seed
         self.rng = np.random.RandomState(seed)
 

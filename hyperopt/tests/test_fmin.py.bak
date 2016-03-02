@@ -49,7 +49,7 @@ def test_quadratic1_anneal():
             max_evals=N,
             trials=trials)
 
-    print(argmin)
+    print argmin
 
     assert len(trials) == N
     assert abs(argmin['x'] - 3.0) < .25
@@ -144,7 +144,7 @@ class TestFmin(unittest.TestCase):
                  trials=self.trials,
                  max_evals=2,
                  catch_eval_exceptions=False)
-        print(len(self.trials))
+        print len(self.trials)
         assert len(self.trials) == 0
         assert len(self.trials._dynamic_trials) == 1
 
@@ -161,6 +161,6 @@ def test_status_fail_tpe():
 
     assert len(trials) == 50, len(trials)
     assert argmin['x'] < 0, argmin
-    assert 'loss' in trials.best_trial['result'], 'loss' in trials.best_trial['result']
+    assert trials.best_trial['result'].has_key('loss'), trials.best_trial['result'].has_key('loss')
     assert trials.best_trial['result']['loss'] >= 9, trials.best_trial['result']['loss']
 

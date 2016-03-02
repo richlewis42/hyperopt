@@ -22,7 +22,7 @@ class TestPChoice(unittest.TestCase):
                 b += 1
             elif nesto == 'bernoulli':
                 c += 1
-        print((a, b, c))
+        print(a, b, c)
         assert a + b + c == 1000
         assert 120 < a < 160
         assert 0 < b < 40
@@ -50,7 +50,7 @@ class TestPChoice(unittest.TestCase):
                 pass
             else:
                 assert 0, nesto
-        print((a, b, c))
+        print(a, b, c)
         assert b > 2 * a
         assert b > 2 * c
 
@@ -73,7 +73,7 @@ class TestPChoice(unittest.TestCase):
                 d += 1
             else:
                 assert 0, nesto
-        print((a, b, c, d))
+        print(a, b, c, d)
         assert a + b + c + d == 2000
         assert 300 < a + b < 500
         assert 1500 < c + d < 1700
@@ -110,7 +110,7 @@ class TestSimpleFMin(unittest.TestCase):
 
         a_vals = [t['misc']['vals']['a'][0] for t in self.trials.trials]
         counts = np.bincount(a_vals)
-        print(counts)
+        print counts
         assert counts[3] > N * .35
         assert counts[3] < N * .60
 
@@ -124,7 +124,7 @@ class TestSimpleFMin(unittest.TestCase):
 
         a_vals = [t['misc']['vals']['a'][0] for t in self.trials.trials]
         counts = np.bincount(a_vals)
-        print(counts)
+        print counts
         assert counts[3] > N * .6
 
     def test_anneal(self):
@@ -137,7 +137,7 @@ class TestSimpleFMin(unittest.TestCase):
 
         a_vals = [t['misc']['vals']['a'][0] for t in self.trials.trials]
         counts = np.bincount(a_vals)
-        print(counts)
+        print counts
         assert counts[3] > N * .6
 
 def test_bug1_rand():

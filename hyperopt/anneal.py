@@ -16,7 +16,7 @@ __contact__ = "github.com/hyperopt/hyperopt"
 import logging
 
 import numpy as np
-from pyll.stochastic import (
+from .pyll.stochastic import (
     # -- integer
     categorical,
     # randint, -- unneeded
@@ -129,12 +129,12 @@ class AnnealingAlgo(SuggestAlgo):
         self.tid_docs_losses = sorted(doc_by_tid.items())
         self.tids = np.asarray([t for (t, (d, l)) in self.tid_docs_losses])
         self.losses = np.asarray([l for (t, (d, l)) in self.tid_docs_losses])
-        self.tid_losses_dct = dict(zip(self.tids, self.losses))
+        self.tid_losses_dct = dict(list(zip(self.tids, self.losses)))
         # node_tids: dict from hp label -> trial ids (tids) using that hyperparam
         # node_vals: dict from hp label -> values taken by that hyperparam
         self.node_tids, self.node_vals = miscs_to_idxs_vals(
             [d['misc'] for (tid, (d, l)) in self.tid_docs_losses],
-            keys=domain.params.keys())
+            keys=list(domain.params.keys()))
         self.best_tids = []
 
     def shrinking(self, label):
@@ -341,9 +341,9 @@ class AnnealingAlgo(SuggestAlgo):
         p = p_orig = np.asarray(memo[node.arg['p']])
         if p.ndim == 2:
             if len(p) not in (1, len(val1)):
-                print node
-                print p
-                print np.asarray(p).shape
+                print(node)
+                print(p)
+                print(np.asarray(p).shape)
             assert len(p) in (1, len(val1))
         else:
             assert p.ndim == 1

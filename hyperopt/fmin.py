@@ -1,7 +1,7 @@
 try:
     import dill as cPickle
 except ImportError:
-    import cPickle
+    import pickle
 
 import functools
 import logging
@@ -11,7 +11,7 @@ import time
 
 import numpy as np
 
-import pyll
+from . import pyll
 from .utils import coarse_utcnow
 from . import base
 
@@ -52,7 +52,7 @@ class FMinIter(object):
     def __init__(self, algo, domain, trials, rstate, async=None,
             max_queue_len=1,
             poll_interval_secs=1.0,
-            max_evals=sys.maxint,
+            max_evals=sys.maxsize,
             verbose=0,
             ):
         self.algo = algo
@@ -70,10 +70,10 @@ class FMinIter(object):
         if self.async:
             if 'FMinIter_Domain' in trials.attachments:
                 logger.warn('over-writing old domain trials attachment')
-            msg = cPickle.dumps(
+            msg = pickle.dumps(
                     domain, protocol=self.cPickle_protocol)
             # -- sanity check for unpickling
-            cPickle.loads(msg)
+            pickle.loads(msg)
             trials.attachments['FMinIter_Domain'] = msg
 
     def serial_evaluate(self, N=-1):
@@ -87,7 +87,7 @@ class FMinIter(object):
                 ctrl = base.Ctrl(self.trials, current_trial=trial)
                 try:
                     result = self.domain.evaluate(spec, ctrl)
-                except Exception, e:
+                except Exception as e:
                     logger.info('job exception: %s' % str(e))
                     trial['state'] = base.JOB_STATE_ERROR
                     trial['misc']['error'] = (str(type(e)), str(e))
@@ -150,8 +150,8 @@ class FMinIter(object):
                 self.trials.refresh()
                 if 0:
                     for d in self.trials.trials:
-                        print 'trial %i %s %s' % (d['tid'], d['state'],
-                            d['result'].get('status'))
+                        print('trial %i %s %s' % (d['tid'], d['state'],
+                            d['result'].get('status')))
                 new_trials = algo(new_ids, self.domain, trials,
                                   self.rstate.randint(2 ** 31 - 1))
                 assert len(new_ids) >= len(new_trials)
@@ -187,7 +187,7 @@ class FMinIter(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         self.run(1, block_until_done=self.async)
         if len(self.trials) >= self.max_evals:
             raise StopIteration()

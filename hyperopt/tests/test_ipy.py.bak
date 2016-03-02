@@ -3,7 +3,7 @@ from nose import SkipTest
 try:
     from IPython.parallel import Client
 except ImportError:
-    print("Skipping IPython Tests (IPython not found)", file=sys.stderr)
+    print >> sys.stderr, "Skipping IPython Tests (IPython not found)"
     raise SkipTest('IPython not present')
 
 from hyperopt.ipy import IPythonTrials
@@ -30,7 +30,7 @@ def test0():
     trials = IPythonTrials(client)
 
     minval = trials.fmin(simple_objective, space, hyperopt.tpe.suggest, 25)
-    print(minval)
+    print minval
     assert minval['x'] < .2
 
 

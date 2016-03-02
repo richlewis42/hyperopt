@@ -25,7 +25,7 @@ def suggest(new_ids, domain, trials, seed, p_suggest):
         
     """
     rng = np.random.RandomState(seed)
-    ps, suggests = zip(*p_suggest)
+    ps, suggests = list(zip(*p_suggest))
     assert len(ps) == len(suggests) == len(p_suggest)
     if not np.isclose(sum(ps), 1.0):
         raise ValueError('Probabilities should sum to 1', ps)

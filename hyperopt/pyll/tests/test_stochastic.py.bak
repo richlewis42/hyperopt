@@ -30,7 +30,7 @@ def test_lnorm():
                  high=10 * np.sqrt(10))
              }})
     print(lnorm)
-    print(('len', len(str(lnorm))))
+    print('len', len(str(lnorm)))
     # not sure what to assert
     # ... this is too fagile
     # assert len(str(lnorm)) == 980

@@ -8,13 +8,13 @@ from hyperopt.pyll import base
 
 def test_literal_pprint():
     l = Literal(5)
-    print((str(l)))
+    print(str(l))
     assert str(l) == '0 Literal{5}'
 
 
 def test_literal_apply():
     l0 = Literal([1, 2, 3])
-    print((str(l0)))
+    print(str(l0))
     assert str(l0) == '0 Literal{[1, 2, 3]}'
 
 
@@ -222,8 +222,8 @@ def test_recursion():
             expr=scope.switch(
                 p0 > 1,
                 1,
-                p0 * ('Fact')(*p0 - 1))))
-    print((scope.Fact(3)))
+                p0 * apply('Fact', p0 - 1))))
+    print(scope.Fact(3))
     #print( rec_eval(scope.Fact(3)))
     assert rec_eval(scope.Fact(3)) == 6
 

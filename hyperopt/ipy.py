@@ -20,8 +20,8 @@ from .base import spec_from_misc
 from .utils import coarse_utcnow
 
 import sys
-print >> sys.stderr, "WARNING: IPythonTrials is not as complete, stable"
-print >> sys.stderr, "         or well tested as Trials or MongoTrials."
+print("WARNING: IPythonTrials is not as complete, stable", file=sys.stderr)
+print("         or well tested as Trials or MongoTrials.", file=sys.stderr)
 
 
 class LostEngineError(RuntimeError):
@@ -53,7 +53,7 @@ class IPythonTrials(Trials):
             job_map[eid] = self.job_map.pop(eid, (None, None))
 
         # -- deal with lost engines, abandoned promises
-        for eid, (p, tt) in self.job_map.items():
+        for eid, (p, tt) in list(self.job_map.items()):
             if self.job_error_reaction == 'raise':
                 raise LostEngineError(p)
             elif self.job_error_reaction == 'log':
@@ -63,7 +63,7 @@ class IPythonTrials(Trials):
                 raise ValueError(self.job_error_reaction)
 
         # -- remove completed jobs from job_map
-        for eid, (p, tt) in job_map.items():
+        for eid, (p, tt) in list(job_map.items()):
             if p is None:
                 continue
             #print p
@@ -72,7 +72,7 @@ class IPythonTrials(Trials):
                 try:
                     tt['result'] = p.get()
                     tt['state'] = JOB_STATE_DONE
-                except Exception, e:
+                except Exception as e:
                     if self.job_error_reaction == 'raise':
                         raise
                     elif self.job_error_reaction == 'log':
@@ -117,16 +117,16 @@ class IPythonTrials(Trials):
             self.refresh()
 
             if verbose and last_print_time + 1 < time():
-                print 'fmin: %4i/%4i/%4i/%4i  %f' % (
+                print('fmin: %4i/%4i/%4i/%4i  %f' % (
                     self.count_by_state_unsynced(JOB_STATE_NEW),
                     self.count_by_state_unsynced(JOB_STATE_RUNNING),
                     self.count_by_state_unsynced(JOB_STATE_DONE),
                     self.count_by_state_unsynced(JOB_STATE_ERROR),
                     min([float('inf')] + [l for l in self.losses() if l is not None])
-                    )
+                    ))
                 last_print_time = time()
 
-            idles = [eid for (eid, (p, tt)) in self.job_map.items() if p is None]
+            idles = [eid for (eid, (p, tt)) in list(self.job_map.items()) if p is None]
 
             if idles:
                 new_ids = self.new_trial_ids(len(idles))
@@ -156,7 +156,7 @@ class IPythonTrials(Trials):
 
         if wait:
             if verbose:
-                print 'fmin: Waiting on remaining jobs...'
+                print('fmin: Waiting on remaining jobs...')
             self.wait(verbose=verbose)
 
         return self.argmin
@@ -166,14 +166,14 @@ class IPythonTrials(Trials):
         while True:
             self.refresh()
             if verbose and last_print_time + verbose_print_interval < time():
-                print 'fmin: %4i/%4i/%4i/%4i  %f' % (
+                print('fmin: %4i/%4i/%4i/%4i  %f' % (
                     self.count_by_state_unsynced(JOB_STATE_NEW),
                     self.count_by_state_unsynced(JOB_STATE_RUNNING),
                     self.count_by_state_unsynced(JOB_STATE_DONE),
                     self.count_by_state_unsynced(JOB_STATE_ERROR),
                     min([float('inf')]
                         + [l for l in self.losses() if l is not None])
-                    )
+                    ))
                 last_print_time = time()
             if self.count_by_state_unsynced(JOB_STATE_NEW):
                 sleep(1e-1)

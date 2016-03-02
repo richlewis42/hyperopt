@@ -21,18 +21,18 @@ def test_expr_to_config():
     hps = {}
     expr_to_config(expr, (True,), hps)
 
-    for label, dct in list(hps.items()):
-        print(label)
-        print('  dist: %s(%s)' % (
+    for label, dct in hps.items():
+        print label
+        print '  dist: %s(%s)' % (
             dct['node'].name,
-            ', '.join(map(str, [ii.eval() for ii in dct['node'].inputs()]))))
+            ', '.join(map(str, [ii.eval() for ii in dct['node'].inputs()])))
         if len(dct['conditions']) > 1:
-            print('  conditions (OR):')
+            print '  conditions (OR):'
             for condseq in dct['conditions']:
-                print('    ', ' AND '.join(map(str, condseq)))
+                print '    ', ' AND '.join(map(str, condseq))
         elif dct['conditions']:
             for condseq in dct['conditions']:
-                print('  conditions :', ' AND '.join(map(str, condseq)))
+                print '  conditions :', ' AND '.join(map(str, condseq))
 
 
     assert hps['a']['node'].name == 'randint'

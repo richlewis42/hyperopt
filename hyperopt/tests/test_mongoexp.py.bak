@@ -1,4 +1,4 @@
-import pickle
+import cPickle
 import os
 import signal
 import subprocess
@@ -21,7 +21,7 @@ from hyperopt.mongoexp import MongoJobs
 from hyperopt.fmin import fmin
 from hyperopt import rand
 import hyperopt.tests.test_base
-from .test_domains import gauss_wave2
+from test_domains import gauss_wave2
 
 def skiptest(f):
     def wrapper(*args, **kwargs):
@@ -62,7 +62,7 @@ class TempMongo(object):
                 interval = .125
                 while interval <= 2:
                     if interval > .125:
-                        print("Waiting for mongo to come up")
+                        print "Waiting for mongo to come up"
                     time.sleep(interval)
                     interval *= 2
                     if  self.db_up():
@@ -75,10 +75,10 @@ class TempMongo(object):
                     except OSError:
                         pass # if it crashed there is no such process
                     out, err = self.mongo_proc.communicate()
-                    print(out, file=sys.stderr)
-                    print(err, file=sys.stderr)
+                    print >> sys.stderr, out
+                    print >> sys.stderr, err
                     raise RuntimeError('No database connection', proc_args)
-            except Exception as e:
+            except Exception, e:
                 try:
                     os.kill(self.mongo_proc.pid, signal.SIGTERM)
                 except OSError:
@@ -113,12 +113,12 @@ class TempMongo(object):
 try:
     with TempMongo() as temp_mongo:
         pass
-except OSError as e:
-    print(e, file=sys.stderr)
-    print(("Failed to create a TempMongo context,"
-        " skipping all mongo tests."), file=sys.stderr)
+except OSError, e:
+    print >> sys.stderr, e
+    print >> sys.stderr, ("Failed to create a TempMongo context,"
+        " skipping all mongo tests.")
     if "such file" in str(e):
-        print("Hint: is mongod executable on path?", file=sys.stderr)
+        print >> sys.stderr, "Hint: is mongod executable on path?"
     raise nose.SkipTest()
 
 
@@ -139,7 +139,7 @@ def with_mongo_trials(f, exp_key=None):
         with TempMongo() as temp_mongo:
             trials = MongoTrials(temp_mongo.connection_string('foo'),
                     exp_key=exp_key)
-            print((len(trials.results)))
+            print(len(trials.results))
             f(trials)
     wrapper.__name__ = f.__name__
     return wrapper
@@ -154,15 +154,15 @@ def _worker_thread_fn(host_id, n_jobs, timeout, dbname='foo', logfilename=None):
     try:
         while n_jobs:
             mw.run_one(host_id, timeout, erase_created_workdir=True)
-            print('worker: %s ran job' % str(host_id))
+            print 'worker: %s ran job' % str(host_id)
             n_jobs -= 1
     except ReserveTimeout:
-        print('worker timed out:', host_id)
+        print 'worker timed out:', host_id
         pass
 
 
 def with_worker_threads(n_threads, dbname='foo',
-        n_jobs=sys.maxsize, timeout=10.0):
+        n_jobs=sys.maxint, timeout=10.0):
     """
     Decorator that will run a test with some MongoWorker threads in flight
     """
@@ -173,7 +173,7 @@ def with_worker_threads(n_threads, dbname='foo',
     def deco(f):
         def wrapper(*args, **kwargs):
             # --start some threads
-            threads = list(map(newth, list(range(n_threads))))
+            threads = map(newth, range(n_threads))
             [th.start() for th in threads]
             try:
                 return f(*args, **kwargs)
@@ -211,14 +211,14 @@ def test_attachments(trials):
     assert 'aname' not in trials.attachments
     trials.attachments['aname'] = blob
     assert 'aname' in trials.attachments
-    assert trials.attachments['aname'] == blob
+    assert trials.attachments[u'aname'] == blob
     assert trials.attachments['aname'] == blob
 
     blob2 = 'zzz'
     trials.attachments['aname'] = blob2
     assert 'aname' in trials.attachments
     assert trials.attachments['aname'] == blob2
-    assert trials.attachments['aname'] == blob2
+    assert trials.attachments[u'aname'] == blob2
 
     del trials.attachments['aname']
     assert 'aname' not in trials.attachments
@@ -262,7 +262,7 @@ class TestExperimentWithThreads(unittest.TestCase):
             workdir="mongoexp_test_dir")
         while n_jobs:
             mw.run_one(host_id, timeout, erase_created_workdir=True)
-            print(('worker: %s ran job' % str(host_id)))
+            print('worker: %s ran job' % str(host_id))
             n_jobs -= 1
 
     @staticmethod
@@ -293,8 +293,8 @@ class TestExperimentWithThreads(unittest.TestCase):
         # -- should not matter which domain is used here
         domain = gauss_wave2()
 
-        pickle.dumps(domain.expr)
-        pickle.dumps(passthrough)
+        cPickle.dumps(domain.expr)
+        cPickle.dumps(passthrough)
 
 
         worker_threads = [
